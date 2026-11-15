@@ -24,4 +24,16 @@ class TicketServiceImplTest {
                 () -> ticketService.purchaseTickets(0L, ticketTypeRequest)
         );
     }
+
+    @Test 
+    @DisplayName ("Rejects child ticket purchase without an adult ticket")
+    void shouldRejectChildTicketPurchaseWithoutAdultTicket() {
+        TicketTypeRequest childTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+
+        assertThrows(
+                InvalidPurchaseException.class,
+                () -> ticketService.purchaseTickets(1L, childTicket)
+        );
+    }
 }
