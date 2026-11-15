@@ -19,6 +19,8 @@ final class TicketPurchaseValidator {
             throw new InvalidPurchaseException("Ticket request cannot be null or empty.");
         }
         int totalTickets = 0;
+        boolean hasAdultTicket = false;
+        boolean hasChildOrInfantTicket = false;
         for (TicketTypeRequest request : ticketTypeRequests) {
             if (request == null) {
                 throw new InvalidPurchaseException("Ticket request cannot contain null values.");
@@ -33,6 +35,16 @@ final class TicketPurchaseValidator {
             }
 
             totalTickets += request.getNoOfTickets();
+
+            if (request.getTicketType() == TicketTypeRequest.Type.ADULT) {
+                hasAdultTicket = true;
+            } else if (request.getTicketType() == TicketTypeRequest.Type.CHILD
+                    || request.getTicketType() == TicketTypeRequest.Type.INFANT) {
+                hasChildOrInfantTicket = true;
+            }
+        }
+        if (hasChildOrInfantTicket && !hasAdultTicket) {
+            throw new InvalidPurchaseException("Child and infant tickets require at least one adult ticket.");
         }
     }
 
