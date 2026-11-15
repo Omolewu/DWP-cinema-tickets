@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 @DisplayName("Ticket purchase validator")
@@ -46,17 +47,24 @@ class TicketPurchaseValidatorTest {
         }
     }
 
-    @Nested 
-    @DisplayName ("Ticket request validation")
+    @Nested
+    @DisplayName("Ticket request validation")
     class TicketRequestValidationTests {
 
-        @Test 
-        @DisplayName ("Rejects a purchase when ticket request is null")
+        @Test
+        @DisplayName("Rejects a purchase when ticket request is null")
         void shouldRejectNullTicketRequest() {
             assertThrows(
                     InvalidPurchaseException.class,
-                    () -> TicketPurchaseValidator.validateTicketRequest(null)
-            );
+                    () -> TicketPurchaseValidator.validateTicketRequest((TicketTypeRequest[]) null));
+        }
+
+        @Test
+        @DisplayName("Rejects an empty ticket request array")
+        void shouldRejectEmptyTicketRequestArray() {
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequest(new TicketTypeRequest[0]));
         }
     }
 }
