@@ -66,5 +66,14 @@ class TicketPurchaseValidatorTest {
                     InvalidPurchaseException.class,
                     () -> TicketPurchaseValidator.validateTicketRequests(new TicketTypeRequest[0]));
         }
+
+        @Test
+        @DisplayName ("Rejects a null element in the ticket request array")
+        void shouldRejectNullElementInTicketRequestArray() {
+            TicketTypeRequest[] ticketRequests = new TicketTypeRequest[]{ null };
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequests));
+        }
     }
 }
