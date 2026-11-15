@@ -13,6 +13,7 @@ public class TicketServiceImpl implements TicketService {
             throws InvalidPurchaseException {
 
         TicketPurchaseValidator.validateAccountId(accountId);
+        TicketPurchaseValidator.validateTicketRequests(ticketTypeRequests);
     }
 
 }
