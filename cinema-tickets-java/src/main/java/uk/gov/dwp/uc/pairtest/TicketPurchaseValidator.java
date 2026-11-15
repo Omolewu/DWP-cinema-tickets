@@ -1,9 +1,10 @@
 package uk.gov.dwp.uc.pairtest;
 
+import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 final class TicketPurchaseValidator {
-    
+
     private TicketPurchaseValidator() {
         // Private constructor to prevent instantiation
     }
@@ -13,5 +14,11 @@ final class TicketPurchaseValidator {
             throw new InvalidPurchaseException("Account ID must be greater than zero.");
         }
     }
-    
+
+    static void validateTicketRequests(TicketTypeRequest... ticketTypeRequests) {
+        if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
+            throw new InvalidPurchaseException("Ticket request cannot be null or empty.");
+        }
+    }
+
 }
