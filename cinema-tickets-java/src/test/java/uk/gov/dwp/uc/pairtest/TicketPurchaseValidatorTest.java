@@ -93,5 +93,27 @@ class TicketPurchaseValidatorTest {
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
         }
 
+        @Test
+        @DisplayName("Rejects purchase exceeding maximum ticket limit of 25")
+        void shouldRejectPurchaseExceedingMaximumTicketLimit() {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 26);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
+        @Test
+        @DisplayName("Rejects combined ticket purchase exceeding maximum ticket limit of 25")
+        void shouldRejectCombinedTicketPurchaseExceedingMaximumTicketLimit() {
+            TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 15);
+            TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 11);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest1, ticketRequest2));
+        }
+
     }
+
 }
