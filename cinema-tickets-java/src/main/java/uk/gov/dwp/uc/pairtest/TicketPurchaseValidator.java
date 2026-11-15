@@ -26,6 +26,10 @@ final class TicketPurchaseValidator {
                 throw new InvalidPurchaseException("Ticket request cannot contain null values.");
             }
 
+            if (request.getTicketType() == null) {
+                throw new InvalidPurchaseException("Ticket type cannot be null.");
+            }
+
             if (request.getNoOfTickets() <= 0) {
                 throw new InvalidPurchaseException("Number of tickets must be greater than zero.");
             }
