@@ -6,7 +6,6 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 final class TicketPurchaseValidator {
 
     private TicketPurchaseValidator() {
-        // Private constructor to prevent instantiation
     }
 
     static void validateAccountId(Long accountId) {
@@ -19,7 +18,7 @@ final class TicketPurchaseValidator {
         if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
             throw new InvalidPurchaseException("Ticket request cannot be null or empty.");
         }
-
+        int totalTickets = 0;
         for (TicketTypeRequest request : ticketTypeRequests) {
             if (request == null) {
                 throw new InvalidPurchaseException("Ticket request cannot contain null values.");
@@ -28,6 +27,12 @@ final class TicketPurchaseValidator {
             if (request.getNoOfTickets() <= 0) {
                 throw new InvalidPurchaseException("Number of tickets must be greater than zero.");
             }
+
+            if (request.getNoOfTickets() > 25 - totalTickets) {
+                throw new InvalidPurchaseException("Cannot purchase more than 25 tickets in a single transaction.");
+            }
+
+            totalTickets += request.getNoOfTickets();
         }
     }
 
