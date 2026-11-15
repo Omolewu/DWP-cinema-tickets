@@ -19,6 +19,12 @@ final class TicketPurchaseValidator {
         if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
             throw new InvalidPurchaseException("Ticket request cannot be null or empty.");
         }
+
+        for (TicketTypeRequest request : ticketTypeRequests) {
+            if (request == null) {
+                throw new InvalidPurchaseException("Ticket request cannot contain null values.");
+            }
+        }
     }
 
 }
