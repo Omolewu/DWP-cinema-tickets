@@ -167,6 +167,33 @@ class TicketPurchaseValidatorTest {
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
         }
 
+        @Test
+        @DisplayName("Accepts child tickets with at least one adult ticket")
+        void shouldAcceptChildTicketsWithAdultTicket() {
+            TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+            TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+
+            assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(adultTicket, childTicket));
+        }
+
+        @Test
+        @DisplayName("Accepts infant tickets with at least one adult ticket")
+        void shouldAcceptInfantTicketsWithAdultTicket() {
+            TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+            TicketTypeRequest infantTicket = new TicketTypeRequest(TicketTypeRequest.Type.INFANT, 1);
+
+            assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(adultTicket, infantTicket));
+        }
+
+        @Test
+        @DisplayName ("Accepts child tickets when the adult ticket appears last")
+        void shouldAcceptChildTicketsWhenAdultTicketAppearsLast() {
+            TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+            TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+
+            assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(childTicket, adultTicket));
+        }
+
     }
 
 }
