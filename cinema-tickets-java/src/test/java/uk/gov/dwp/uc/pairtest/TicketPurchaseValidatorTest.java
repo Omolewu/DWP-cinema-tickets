@@ -68,12 +68,30 @@ class TicketPurchaseValidatorTest {
         }
 
         @Test
-        @DisplayName ("Rejects a null element in the ticket request array")
+        @DisplayName("Rejects a null element in the ticket request array")
         void shouldRejectNullElementInTicketRequestArray() {
-            TicketTypeRequest[] ticketRequests = new TicketTypeRequest[]{ null };
+            TicketTypeRequest[] ticketRequests = new TicketTypeRequest[] { null };
+
             assertThrows(
                     InvalidPurchaseException.class,
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequests));
         }
+    }
+
+    @Nested
+    @DisplayName("Ticket quantity validation")
+    class TicketQuantityValidationTests {
+
+        @ParameterizedTest
+        @ValueSource(ints = { 0, -1 })
+        @DisplayName("Rejects zero and negative ticket quantities")
+        void shouldRejectZeroOrNegativeTicketQuantities(int quantity) {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, quantity);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
     }
 }
