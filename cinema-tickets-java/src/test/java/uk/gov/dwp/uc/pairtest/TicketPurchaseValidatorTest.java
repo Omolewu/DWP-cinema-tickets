@@ -56,7 +56,7 @@ class TicketPurchaseValidatorTest {
         void shouldRejectNullTicketRequest() {
             assertThrows(
                     InvalidPurchaseException.class,
-                    () -> TicketPurchaseValidator.validateTicketRequest((TicketTypeRequest[]) null));
+                    () -> TicketPurchaseValidator.validateTicketRequests((TicketTypeRequest[]) null));
         }
 
         @Test
@@ -64,7 +64,7 @@ class TicketPurchaseValidatorTest {
         void shouldRejectEmptyTicketRequestArray() {
             assertThrows(
                     InvalidPurchaseException.class,
-                    () -> TicketPurchaseValidator.validateTicketRequest(new TicketTypeRequest[0]));
+                    () -> TicketPurchaseValidator.validateTicketRequests(new TicketTypeRequest[0]));
         }
     }
 }
