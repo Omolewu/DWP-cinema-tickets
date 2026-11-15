@@ -1,39 +1,67 @@
 package uk.gov.dwp.uc.pairtest;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import thirdparty.paymentgateway.TicketPaymentService;
+import thirdparty.seatbooking.SeatReservationService;
 import uk.gov.dwp.uc.pairtest.domain.TicketTypeRequest;
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import org.junit.jupiter.api.DisplayName;
-
-@DisplayName ("Ticket purchase service")
+@DisplayName("Ticket purchase service")
 class TicketServiceImplTest {
 
-   private final TicketServiceImpl ticketService = new TicketServiceImpl();
-
+    private TicketPaymentService ticketPaymentService;
+    private SeatReservationService seatReservationService;
+    private TicketServiceImpl ticketService;
+    
+    @BeforeEach
+    void setup() {
+        ticketPaymentService = mock(TicketPaymentService.class);
+        seatReservationService = mock(SeatReservationService.class);
+        ticketService =
+         new TicketServiceImpl(
+            ticketPaymentService, 
+            seatReservationService
+        );    
+    }
     @Test
-    @DisplayName ("should reject purchase when account ID is zero")
+    @DisplayName("should reject purchase when account ID is zero")
     void shouldRejectPurchaseWhenAccountIdIsZero() {
-        TicketTypeRequest ticketTypeRequest = 
-        new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+        TicketTypeRequest ticketTypeRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
 
         assertThrows(
                 InvalidPurchaseException.class,
-                () -> ticketService.purchaseTickets(0L, ticketTypeRequest)
-        );
+                () -> ticketService.purchaseTickets(0L, ticketTypeRequest));
     }
 
-    @Test 
-    @DisplayName ("Rejects child ticket purchase without an adult ticket")
+    @Test
+    @DisplayName("Rejects child ticket purchase without an adult ticket")
     void shouldRejectChildTicketPurchaseWithoutAdultTicket() {
-        TicketTypeRequest childTicket =
-         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+        TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
 
         assertThrows(
                 InvalidPurchaseException.class,
                 () -> ticketService.purchaseTickets(1L, childTicket)
-        );
+            );
+    }
+
+    @Test 
+    @DisplayName ("Charges £25 and reserves one seat for a single adult ticket purchase")
+    void shouldChargeAndReserveSeatForSingleAdultTicketPurchase() {
+        TicketTypeRequest adultTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+        ticketService.purchaseTickets(1L, adultTicket);
+        
+       verify(ticketPaymentService).makePayment(1L, 25);
+       verify(seatReservationService).reserveSeat(1L, 1);
+         
+        
     }
 }
