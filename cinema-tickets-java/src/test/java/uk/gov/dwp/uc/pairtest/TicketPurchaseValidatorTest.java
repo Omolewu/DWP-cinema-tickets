@@ -60,6 +60,16 @@ class TicketPurchaseValidatorTest {
         }
 
         @Test
+        @DisplayName("Rejects ticket requests with a null ticket type")
+        void shouldRejectTicketRequestsWithNullTicketType() {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(null, 1);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
+        @Test
         @DisplayName("Rejects an empty ticket request array")
         void shouldRejectEmptyTicketRequestArray() {
             assertThrows(
@@ -114,16 +124,16 @@ class TicketPurchaseValidatorTest {
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest1, ticketRequest2));
         }
 
-        @Test 
-        @DisplayName ("Accepts a purchase of exactly 25 tickets")
+        @Test
+        @DisplayName("Accepts a purchase of exactly 25 tickets")
         void shouldAcceptValidTicketQuantitiesWithinMaximumLimit() {
             TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 25);
 
             assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
         }
 
-        @Test 
-        @DisplayName ("Accepts combined ticket requests totalling 25 tickets")
+        @Test
+        @DisplayName("Accepts combined ticket requests totalling 25 tickets")
         void shouldAcceptCombinedTicketPurchaseWithinMaximumLimit() {
             TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
             TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 15);
@@ -133,12 +143,12 @@ class TicketPurchaseValidatorTest {
 
     }
 
-    @Nested 
-    @DisplayName ("Adult ticket requirement validation")
+    @Nested
+    @DisplayName("Adult ticket requirement validation")
     class AdultRequirementValidationTests {
 
         @Test
-        @DisplayName ("Rejects child tickets without at least one adult ticket")
+        @DisplayName("Rejects child tickets without at least one adult ticket")
         void shouldRejectChildTicketsWithoutAdultTicket() {
             TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
 
@@ -147,8 +157,8 @@ class TicketPurchaseValidatorTest {
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
         }
 
-        @Test 
-        @DisplayName ("Rejects infant tickets without at least one adult ticket")
+        @Test
+        @DisplayName("Rejects infant tickets without at least one adult ticket")
         void shouldRejectInfantTicketsWithoutAdultTicket() {
             TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.INFANT, 1);
 
