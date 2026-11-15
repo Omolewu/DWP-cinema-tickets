@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
-@DisplayName ("Ticket Purchase Validator")
+@DisplayName ("Ticket purchase validator")
 public class TicketPurchaseValidatorTest {
     
     @Test 
@@ -17,6 +17,26 @@ public class TicketPurchaseValidatorTest {
         assertThrows(
             InvalidPurchaseException.class,
             () -> TicketPurchaseValidator.validateAccountId(0L)
+        );
+    }
+
+    @Test
+    @DisplayName ("should reject account ID of negative value")
+    void shouldRejectAccountIdOfNegativeValue() {
+       
+        assertThrows(
+            InvalidPurchaseException.class,
+            () -> TicketPurchaseValidator.validateAccountId(-1L)
+        );
+    }
+
+    @Test
+    @DisplayName ("should reject null account ID")
+    void shouldRejectNullAccountId() {
+       
+        assertThrows(
+            InvalidPurchaseException.class,
+            () -> TicketPurchaseValidator.validateAccountId(null)
         );
     }
 }
