@@ -45,4 +45,18 @@ class TicketPurchaseValidatorTest {
 
         }
     }
+
+    @Nested 
+    @DisplayName ("Ticket request validation")
+    class TicketRequestValidationTests {
+
+        @Test 
+        @DisplayName ("Rejects a purchase when ticket request is null")
+        void shouldRejectNullTicketRequest() {
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequest(null)
+            );
+        }
+    }
 }
