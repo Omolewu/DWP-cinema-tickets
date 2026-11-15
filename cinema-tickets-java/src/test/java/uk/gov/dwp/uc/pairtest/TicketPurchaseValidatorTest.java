@@ -114,6 +114,24 @@ class TicketPurchaseValidatorTest {
                     () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest1, ticketRequest2));
         }
 
+        @Test 
+        @DisplayName ("Accepts a purchase of exactly 25 tickets")
+        void shouldAcceptValidTicketQuantitiesWithinMaximumLimit() {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 25);
+
+            assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
+        @Test 
+        @DisplayName ("Accepts combined ticket requests totalling 25 tickets")
+        void shouldAcceptCombinedTicketPurchaseWithinMaximumLimit() {
+            TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
+            TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 15);
+
+            assertDoesNotThrow(() -> TicketPurchaseValidator.validateTicketRequests(ticketRequest1, ticketRequest2));
+        }
+
     }
+
 
 }
