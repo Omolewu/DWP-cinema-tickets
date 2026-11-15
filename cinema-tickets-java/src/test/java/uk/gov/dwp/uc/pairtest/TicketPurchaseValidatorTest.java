@@ -133,5 +133,30 @@ class TicketPurchaseValidatorTest {
 
     }
 
+    @Nested 
+    @DisplayName ("Adult ticket requirement validation")
+    class AdultRequirementValidationTests {
+
+        @Test
+        @DisplayName ("Rejects child tickets without at least one adult ticket")
+        void shouldRejectChildTicketsWithoutAdultTicket() {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
+        @Test 
+        @DisplayName ("Rejects infant tickets without at least one adult ticket")
+        void shouldRejectInfantTicketsWithoutAdultTicket() {
+            TicketTypeRequest ticketRequest = new TicketTypeRequest(TicketTypeRequest.Type.INFANT, 1);
+
+            assertThrows(
+                    InvalidPurchaseException.class,
+                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest));
+        }
+
+    }
 
 }
