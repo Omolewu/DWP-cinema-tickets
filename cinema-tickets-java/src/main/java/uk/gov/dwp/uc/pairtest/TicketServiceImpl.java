@@ -12,10 +12,7 @@ public class TicketServiceImpl implements TicketService {
     public void purchaseTickets(Long accountId, TicketTypeRequest... ticketTypeRequests)
             throws InvalidPurchaseException {
 
-        if (accountId == null || accountId <= 0) {
-
-            throw new InvalidPurchaseException("Account ID must be greater than zero.");
-        }
+        TicketPurchaseValidator.validateAccountId(accountId);
     }
 
 }
