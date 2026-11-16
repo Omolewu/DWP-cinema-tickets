@@ -1,5 +1,6 @@
 package uk.gov.dwp.uc.pairtest;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
@@ -142,10 +143,11 @@ class TicketServiceImplTest {
                 .when(ticketPaymentService)
                 .makePayment(1L, 25);
 
-        assertThrows(
+      RuntimeException thrown =  assertThrows(
                 RuntimeException.class,
                 () -> ticketService.purchaseTickets(1L, adultTicket));
-
+        assertSame(paymentFailureException, thrown);
+        
         verify(ticketPaymentService).makePayment(1L, 25);
         verifyNoInteractions(seatReservationService);
     }
