@@ -35,7 +35,7 @@ class TicketServiceImplTest {
     }
 
     @Test
-    @DisplayName("should reject purchase when account ID is zero")
+    @DisplayName("Rejects a purchase when account ID is zero")
     void shouldRejectPurchaseWhenAccountIdIsZero() {
         TicketTypeRequest ticketTypeRequest = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
 
@@ -109,7 +109,7 @@ class TicketServiceImplTest {
     }
 
     @Test
-    @DisplayName("Process payment before reserving seats")
+    @DisplayName("Processes payment before reserving seats")
     void shouldProcessPaymentBeforeReservingSeats() {
         TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
         TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 1);
@@ -122,13 +122,14 @@ class TicketServiceImplTest {
     }
 
     @Test
-    @DisplayName("Does not process payment or reserve seats for invalid purchases")
-    void shouldNotProcessPaymentOrReserveSeatsForInvalidPurchases() {
-        TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 1);
+    @DisplayName("Does not process payment or reserve seats when the 25-ticket limit is exceeded")
+    void shouldNotProcessPaymentOrReserveSeatsWhenTicketLimitIsExceeded() {
+        TicketTypeRequest adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 23);
+        TicketTypeRequest childTickets = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 10);
 
         assertThrows(
                 InvalidPurchaseException.class,
-                () -> ticketService.purchaseTickets(1L, childTicket));
+                () -> ticketService.purchaseTickets(1L, adultTickets, childTickets));
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
@@ -155,44 +156,40 @@ class TicketServiceImplTest {
     @Test
     @DisplayName("Aggregates multiple requests for the same ticket type")
     void shouldAggregateMultipleRequestsForSameTicketType() {
-        TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 2);
-        TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 3);
+        TicketTypeRequest firstAdultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 2);
+        TicketTypeRequest secondAdultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 3);
 
-        ticketService.purchaseTickets(1L, ticketRequest1, ticketRequest2);
+        ticketService.purchaseTickets(1L, firstAdultTickets, secondAdultTickets);
 
         verify(ticketPaymentService).makePayment(1L, 125);
         verify(seatReservationService).reserveSeat(1L, 5);
     }
 
-    @Test 
-    @DisplayName ("Processes a purchase of exactly 25 tickets")
+    @Test
+    @DisplayName("Processes a purchase of exactly 25 tickets")
     void shouldProcessPurchaseOfExactly25Tickets() {
-        TicketTypeRequest ticketRequest1 =
-         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
-        TicketTypeRequest ticketRequest2 =
-         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 15);
+        TicketTypeRequest adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
+        TicketTypeRequest childTickets = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 15);
 
-        ticketService.purchaseTickets(1L, ticketRequest1, ticketRequest2);
+        ticketService.purchaseTickets(1L, adultTickets, childTickets);
 
         verify(ticketPaymentService).makePayment(1L, 475);
         verify(seatReservationService).reserveSeat(1L, 25);
     }
 
-    @Test 
-    @DisplayName ("Rejects a null payment service dependency")
+    @Test
+    @DisplayName("Rejects a null payment service dependency")
     void shouldRejectNullPaymentServiceDependency() {
         assertThrows(
                 NullPointerException.class,
-                () -> new TicketServiceImpl(null, seatReservationService)
-        );
+                () -> new TicketServiceImpl(null, seatReservationService));
     }
 
     @Test
-    @DisplayName ("Rejects a null seat reservation service dependency")
+    @DisplayName("Rejects a null seat reservation service dependency")
     void shouldRejectNullSeatReservationServiceDependency() {
         assertThrows(
                 NullPointerException.class,
-                () -> new TicketServiceImpl(ticketPaymentService, null)
-        );
+                () -> new TicketServiceImpl(ticketPaymentService, null));
     }
 }
