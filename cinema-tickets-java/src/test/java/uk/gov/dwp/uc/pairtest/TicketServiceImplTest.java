@@ -1,6 +1,7 @@
 package uk.gov.dwp.uc.pairtest;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -129,5 +130,23 @@ class TicketServiceImplTest {
                 () -> ticketService.purchaseTickets(1L, childTicket));
 
         verifyNoInteractions(ticketPaymentService, seatReservationService);
+    }
+
+    @Test
+    @DisplayName("Does not reserve seats when payment fails")
+    void shouldNotReserveSeatsWhenPaymentFails() {
+        TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+
+        RuntimeException paymentFailureException = new RuntimeException("Payment failed");
+        doThrow(paymentFailureException)
+                .when(ticketPaymentService)
+                .makePayment(1L, 25);
+
+        assertThrows(
+                RuntimeException.class,
+                () -> ticketService.purchaseTickets(1L, adultTicket));
+
+        verify(ticketPaymentService).makePayment(1L, 25);
+        verifyNoInteractions(seatReservationService);
     }
 }
