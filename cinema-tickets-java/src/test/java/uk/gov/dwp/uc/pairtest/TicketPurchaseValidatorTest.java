@@ -20,9 +20,8 @@ class TicketPurchaseValidatorTest {
     class AccountIdValidationTests {
         @ParameterizedTest
         @ValueSource(longs = { 0L, -1L })
-        @DisplayName("Rejects zero and negative account IDs")
+        @DisplayName ("Rejects zero and negative account IDs")
         void shouldRejectZeroOrNegativeAccountId(long accountId) {
-
             assertThrows(
                     InvalidPurchaseException.class,
                     () -> TicketPurchaseValidator.validateAccountId(accountId));
@@ -40,7 +39,6 @@ class TicketPurchaseValidatorTest {
         @Test
         @DisplayName("Accepts a valid account ID")
         void shouldAcceptValidAccountId() {
-
             assertDoesNotThrow(
                     () -> TicketPurchaseValidator.validateAccountId(1L));
 
@@ -116,12 +114,12 @@ class TicketPurchaseValidatorTest {
         @Test
         @DisplayName("Rejects combined ticket purchase exceeding maximum ticket limit of 25")
         void shouldRejectCombinedTicketPurchaseExceedingMaximumTicketLimit() {
-            TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 15);
-            TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 11);
+            TicketTypeRequest adultTickets = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 15);
+            TicketTypeRequest childTickets = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 11);
 
             assertThrows(
                     InvalidPurchaseException.class,
-                    () -> TicketPurchaseValidator.validateTicketRequests(ticketRequest1, ticketRequest2));
+                    () -> TicketPurchaseValidator.validateTicketRequests(adultTickets, childTickets));
         }
 
         @Test
@@ -186,7 +184,7 @@ class TicketPurchaseValidatorTest {
         }
 
         @Test
-        @DisplayName ("Accepts child tickets when the adult ticket appears last")
+        @DisplayName("Accepts child tickets when the adult ticket appears last")
         void shouldAcceptChildTicketsWhenAdultTicketAppearsLast() {
             TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
             TicketTypeRequest adultTicket = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
