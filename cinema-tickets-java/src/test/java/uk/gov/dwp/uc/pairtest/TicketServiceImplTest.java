@@ -163,4 +163,18 @@ class TicketServiceImplTest {
         verify(ticketPaymentService).makePayment(1L, 125);
         verify(seatReservationService).reserveSeat(1L, 5);
     }
+
+    @Test 
+    @DisplayName ("Processes a purchase of exactly 25 tickets")
+    void shouldProcessPurchaseOfExactly25Tickets() {
+        TicketTypeRequest ticketRequest1 =
+         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 10);
+        TicketTypeRequest ticketRequest2 =
+         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 15);
+
+        ticketService.purchaseTickets(1L, ticketRequest1, ticketRequest2);
+
+        verify(ticketPaymentService).makePayment(1L, 475);
+        verify(seatReservationService).reserveSeat(1L, 25);
+    }
 }
