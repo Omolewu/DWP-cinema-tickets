@@ -28,9 +28,14 @@ public class TicketServiceImpl implements TicketService {
         int totalAmountToPay = 0;
 
         for (TicketTypeRequest request : ticketTypeRequests) {
+            int quantity = request.getNoOfTickets();
+
             if (request.getTicketType() == TicketTypeRequest.Type.ADULT) {
-                totalSeatsToReserve += request.getNoOfTickets();
-                totalAmountToPay += request.getNoOfTickets() * 25;
+                totalAmountToPay += quantity * 25;
+                totalSeatsToReserve += quantity;
+            } else if (request.getTicketType() == TicketTypeRequest.Type.CHILD) {
+                totalAmountToPay += quantity * 15;
+                totalSeatsToReserve += quantity;
             }
         }
 
