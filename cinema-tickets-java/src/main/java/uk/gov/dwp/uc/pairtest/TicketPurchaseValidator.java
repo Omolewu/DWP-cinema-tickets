@@ -5,6 +5,8 @@ import uk.gov.dwp.uc.pairtest.exception.InvalidPurchaseException;
 
 final class TicketPurchaseValidator {
 
+    private static final int MAX_TICKETS_PER_PURCHASE = 25;
+
     private TicketPurchaseValidator() {
     }
 
@@ -18,35 +20,41 @@ final class TicketPurchaseValidator {
         if (ticketTypeRequests == null || ticketTypeRequests.length == 0) {
             throw new InvalidPurchaseException("Ticket request cannot be null or empty.");
         }
+
         int totalTickets = 0;
         boolean hasAdultTicket = false;
         boolean hasChildOrInfantTicket = false;
+
         for (TicketTypeRequest request : ticketTypeRequests) {
             if (request == null) {
                 throw new InvalidPurchaseException("Ticket request cannot contain null values.");
             }
 
-            if (request.getTicketType() == null) {
+            TicketTypeRequest.Type ticketType = request.getTicketType();
+            int quantity = request.getNoOfTickets();
+
+            if (ticketType == null) {
                 throw new InvalidPurchaseException("Ticket type cannot be null.");
             }
 
-            if (request.getNoOfTickets() <= 0) {
+            if (quantity <= 0) {
                 throw new InvalidPurchaseException("Number of tickets must be greater than zero.");
             }
 
-            if (request.getNoOfTickets() > 25 - totalTickets) {
-                throw new InvalidPurchaseException("Cannot purchase more than 25 tickets in a single transaction.");
+            if (quantity > MAX_TICKETS_PER_PURCHASE - totalTickets) {
+                throw new InvalidPurchaseException(
+                        "Cannot purchase more than " + MAX_TICKETS_PER_PURCHASE
+                                + " tickets in a single transaction.");
             }
 
-            totalTickets += request.getNoOfTickets();
+            totalTickets += quantity;
 
-            if (request.getTicketType() == TicketTypeRequest.Type.ADULT) {
-                hasAdultTicket = true;
-            } else if (request.getTicketType() == TicketTypeRequest.Type.CHILD
-                    || request.getTicketType() == TicketTypeRequest.Type.INFANT) {
-                hasChildOrInfantTicket = true;
+            switch (ticketType) {
+                case ADULT -> hasAdultTicket = true;
+                case CHILD, INFANT -> hasChildOrInfantTicket = true;
             }
         }
+
         if (hasChildOrInfantTicket && !hasAdultTicket) {
             throw new InvalidPurchaseException("Child and infant tickets require at least one adult ticket.");
         }
