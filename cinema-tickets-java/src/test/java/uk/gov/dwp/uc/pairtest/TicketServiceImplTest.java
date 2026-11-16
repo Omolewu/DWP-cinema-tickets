@@ -58,10 +58,19 @@ class TicketServiceImplTest {
         TicketTypeRequest adultTicket =
          new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
         ticketService.purchaseTickets(1L, adultTicket);
-        
+
        verify(ticketPaymentService).makePayment(1L, 25);
        verify(seatReservationService).reserveSeat(1L, 1);
-         
-        
+    }
+
+    @Test
+    @DisplayName ("Charges £75 and reserves three seats for a purchase of three adult tickets")
+    void shouldChargeAndReserveSeatsForMultipleAdultTicketPurchase() {
+        TicketTypeRequest adultTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 3);
+        ticketService.purchaseTickets(1L, adultTicket);
+
+       verify(ticketPaymentService).makePayment(1L, 75);
+       verify(seatReservationService).reserveSeat(1L, 3);
     }
 }
