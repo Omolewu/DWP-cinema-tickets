@@ -112,9 +112,7 @@ In a production system, a reservation failure after successful payment could lea
 
 ### Monetary values
 
-### Monetary values
-
-Although `BigDecimal` is generally preferred for decimal monetary calculations, this exercise uses `int` because ticket prices are whole-pound amounts and the supplied payment service accepts an integer. This avoids unnecessary complexity while preserving accuracy..
+Although `BigDecimal` is generally preferred for decimal monetary calculations, this exercise uses `int` because ticket prices are whole-pound amounts and the supplied payment service accepts an integer. This avoids unnecessary complexity while preserving accuracy.
 
 ## Assessment Constraints
 
