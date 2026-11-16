@@ -73,4 +73,17 @@ class TicketServiceImplTest {
        verify(ticketPaymentService).makePayment(1L, 75);
        verify(seatReservationService).reserveSeat(1L, 3);
     }
+
+    @Test 
+    @DisplayName ("Charges £55 and reserves three seats for one adult and two child tickets")
+    void shouldChargeAndReserveSeatsForAdultAndChildTicketPurchase() {
+        TicketTypeRequest adultTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 1);
+        TicketTypeRequest childTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 2);
+        ticketService.purchaseTickets(1L, adultTicket, childTicket);
+
+       verify(ticketPaymentService).makePayment(1L, 55);
+       verify(seatReservationService).reserveSeat(1L, 3);
+    }
 }
