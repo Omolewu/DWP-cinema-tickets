@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -116,5 +117,17 @@ class TicketServiceImplTest {
         InOrder inOrder = inOrder(ticketPaymentService, seatReservationService);
         inOrder.verify(ticketPaymentService).makePayment(1L, 40);
         inOrder.verify(seatReservationService).reserveSeat(1L, 2);
+    }
+
+    @Test
+    @DisplayName("Does not process payment or reserve seats for invalid purchases")
+    void shouldNotProcessPaymentOrReserveSeatsForInvalidPurchases() {
+        TicketTypeRequest childTicket = new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 1);
+
+        assertThrows(
+                InvalidPurchaseException.class,
+                () -> ticketService.purchaseTickets(1L, childTicket));
+
+        verifyNoInteractions(ticketPaymentService, seatReservationService);
     }
 }
