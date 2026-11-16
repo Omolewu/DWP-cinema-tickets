@@ -177,4 +177,22 @@ class TicketServiceImplTest {
         verify(ticketPaymentService).makePayment(1L, 475);
         verify(seatReservationService).reserveSeat(1L, 25);
     }
+
+    @Test 
+    @DisplayName ("Rejects a null payment service dependency")
+    void shouldRejectNullPaymentServiceDependency() {
+        assertThrows(
+                NullPointerException.class,
+                () -> new TicketServiceImpl(null, seatReservationService)
+        );
+    }
+
+    @Test
+    @DisplayName ("Rejects a null seat reservation service dependency")
+    void shouldRejectNullSeatReservationServiceDependency() {
+        assertThrows(
+                NullPointerException.class,
+                () -> new TicketServiceImpl(ticketPaymentService, null)
+        );
+    }
 }
