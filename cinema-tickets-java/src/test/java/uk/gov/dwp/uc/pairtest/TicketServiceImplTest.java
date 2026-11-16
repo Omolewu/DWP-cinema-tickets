@@ -99,4 +99,19 @@ class TicketServiceImplTest {
        verify(ticketPaymentService).makePayment(1L, 25);
        verify(seatReservationService).reserveSeat(1L, 1);
     }
+
+    @Test 
+    @DisplayName ("Charges £95 and reserves five seats for a mixed ticket purchase")
+    void shouldChargeAndReserveSeatsForMixedTicketPurchase() {
+        TicketTypeRequest adultTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 2);
+        TicketTypeRequest childTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.CHILD, 3);
+        TicketTypeRequest infantTicket =
+         new TicketTypeRequest(TicketTypeRequest.Type.INFANT, 2);
+        ticketService.purchaseTickets(1L, adultTicket, childTicket, infantTicket);
+
+       verify(ticketPaymentService).makePayment(1L, 95);
+       verify(seatReservationService).reserveSeat(1L, 5);
+    }
 }
