@@ -143,12 +143,24 @@ class TicketServiceImplTest {
                 .when(ticketPaymentService)
                 .makePayment(1L, 25);
 
-      RuntimeException thrown =  assertThrows(
+        RuntimeException thrown = assertThrows(
                 RuntimeException.class,
                 () -> ticketService.purchaseTickets(1L, adultTicket));
         assertSame(paymentFailureException, thrown);
-        
+
         verify(ticketPaymentService).makePayment(1L, 25);
         verifyNoInteractions(seatReservationService);
+    }
+
+    @Test
+    @DisplayName("Aggregates multiple requests for the same ticket type")
+    void shouldAggregateMultipleRequestsForSameTicketType() {
+        TicketTypeRequest ticketRequest1 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 2);
+        TicketTypeRequest ticketRequest2 = new TicketTypeRequest(TicketTypeRequest.Type.ADULT, 3);
+
+        ticketService.purchaseTickets(1L, ticketRequest1, ticketRequest2);
+
+        verify(ticketPaymentService).makePayment(1L, 125);
+        verify(seatReservationService).reserveSeat(1L, 5);
     }
 }
